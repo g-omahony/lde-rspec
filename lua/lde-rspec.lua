@@ -42,7 +42,7 @@ function M.select_service()
 	local buf = create_service_selection_buffer()
 	vim.cmd("botright split")
 	vim.api.nvim_set_current_buf(buf)
-	-- vim.cmd("startinsert")
+	vim.cmd("startinsert")
 	vim.cmd('nnoremap <buffer><silent><CR> :lua require("lde-rspec").set_service()<CR>')
 end
 
