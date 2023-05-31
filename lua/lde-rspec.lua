@@ -1,3 +1,5 @@
+local popup = require("plenary.popup")
+
 local M = {}
 
 local function write_config(config)
@@ -23,12 +25,31 @@ local function docker_command(service)
 	return "docker exec -it kitman-lde-" .. service .. ' bash -c "bundle exec rspec '
 end
 
+-- local function create_service_selection_buffer()
+-- 	local services = { "medinah", "console", "athlete-api" }
+-- 	local buf = vim.api.nvim_create_buf(false, true)
+-- 	vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+-- 	vim.api.nvim_buf_set_option(buf, "filetype", "lde-rspec")
+-- 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, services)
+-- 	return buf
+-- end
 local function create_service_selection_buffer()
+	local width = 20
+	local height = 3
 	local services = { "medinah", "console", "athlete-api" }
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
 	vim.api.nvim_buf_set_option(buf, "filetype", "lde-rspec")
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, services)
+	local win_id, _ = popup.create(buf, {
+		title = "Select Service",
+		highlight = "PopupColor",
+		line = math.floor(((vim.o.lines - height) / 2) - 1),
+		col = math.floor((vim.o.columns - width) / 2),
+		minwidth = width,
+		minheight = height,
+		borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+	})
 	return buf
 end
 
@@ -40,7 +61,7 @@ end
 
 function M.select_service()
 	local buf = create_service_selection_buffer()
-	vim.cmd("botright split")
+	-- vim.cmd("botright split")
 	vim.api.nvim_set_current_buf(buf)
 	-- vim.cmd("startinsert")
 	vim.cmd('nnoremap <buffer><silent><CR> :lua require("lde-rspec").set_service()<CR>')
