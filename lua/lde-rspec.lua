@@ -3,16 +3,22 @@ local fterm = require("FTerm")
 
 local M = {}
 
+local function config_path()
+	return vim.fn.stdpath("data") .. "/lde-rspec.json"
+end
+
 local function write_config(config)
 	local json = vim.fn.json_encode(config)
-	local path = vim.fn.stdpath("data") .. "/lde-rspec.json"
+	local path = config_path()
 	local file = io.open(path, "w")
-	file:write(json)
-	file:close()
+	if file ~= nil then
+		file:write(json)
+		file:close()
+	end
 end
 
 local function read_config()
-	local path = vim.fn.stdpath("data") .. "/lde-rspec.json"
+	local path = config_path()
 	local file = io.open(path, "r")
 
 	if file == nil then
