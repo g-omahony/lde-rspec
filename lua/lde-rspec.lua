@@ -8,8 +8,23 @@ local function write_config(config)
 	file:close()
 end
 
+local function read_config()
+	local path = vim.fn.stdpath("data") .. "/lde-rspec.json"
+	local file = io.open(path, "r")
+	if file == nil then
+		return M:set_service()
+	else
+		local config = assert(vim.fn.json_decode(file:read()))
+		return config.service
+	end
+end
+
+local function docker_command(service)
+	return "docker exec -it kitman-lde-" .. service .. ' bash -c "bundle exec rspec '
+end
+
 local function create_service_selection_buffer()
-	local services = { "service_a", "service_b", "service_c" }
+	local services = { "medinah", "console", "athlete-api" }
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
 	vim.api.nvim_buf_set_option(buf, "filetype", "lde-rspec")
@@ -27,7 +42,7 @@ function M.select_service()
 	local buf = create_service_selection_buffer()
 	vim.cmd("botright split")
 	vim.api.nvim_set_current_buf(buf)
-	vim.cmd("startinsert")
+	-- vim.cmd("startinsert")
 	vim.cmd('nnoremap <buffer><silent><CR> :lua require("lde-rspec").set_service()<CR>')
 end
 
@@ -36,11 +51,29 @@ function M.set_service()
 	local config = { service = service }
 	write_config(config)
 
-	-- Open FTerm and output the selected service name
-	local fterm_cmd = "FTermToggle --title=lde-rspec --persist"
-	local output_cmd = 'FTermSend --title=lde-rspec --persist "Selected  ' .. service .. '"'
-	vim.cmd(fterm_cmd)
-	vim.cmd(output_cmd)
+	return service
+end
+
+function M.run_nearest_spec()
+	local service = read_config()
+
+	local specPath = vim.fn.expand("%") .. ":" .. vim.api.nvim_win_get_cursor(0)[1]
+	local runCommand = docker_command(service) .. specPath .. '"'
+	require("FTerm").run(runCommand)
+end
+
+function M.run_this_spec()
+	local service = read_config()
+	local specPath = vim.fn.expand("%")
+	local runCommand = docker_command(service) .. specPath .. '"'
+	require("FTerm").run(runCommand)
+end
+
+function M.run_spec_folder()
+	local service = read_config()
+	local specPath = vim.fn.expand("%:h")
+	local runCommand = docker_command(service) .. specPath .. '"'
+	require("FTerm").run(runCommand)
 end
 
 return M
