@@ -1,4 +1,5 @@
 local popup = require("plenary.popup")
+local fterm = require("FTerm")
 
 local M = {}
 
@@ -13,6 +14,7 @@ end
 local function read_config()
 	local path = vim.fn.stdpath("data") .. "/lde-rspec.json"
 	local file = io.open(path, "r")
+
 	if file == nil then
 		return M:select_service()
 	else
@@ -42,12 +44,14 @@ local function create_service_selection_buffer()
 		minheight = height,
 		borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
 	})
+
 	return buf
 end
 
 local function select_service(buf)
 	local selected = vim.fn.getline(".")
 	vim.api.nvim_buf_delete(buf, { force = true })
+
 	return selected
 end
 
@@ -67,21 +71,20 @@ end
 
 function M.run_nearest_spec()
 	local service = read_config()
-
 	local specPath = vim.fn.expand("%") .. ":" .. vim.api.nvim_win_get_cursor(0)[1]
-	require("FTerm").run(run_command(service, specPath))
+	fterm.run(run_command(service, specPath))
 end
 
 function M.run_this_spec()
 	local service = read_config()
 	local specPath = vim.fn.expand("%")
-	require("FTerm").run(run_command(service, specPath))
+	fterm.run(run_command(service, specPath))
 end
 
 function M.run_spec_folder()
 	local service = read_config()
 	local specPath = vim.fn.expand("%:h")
-	require("FTerm").run(run_command(service, specPath))
+	fterm.run(run_command(service, specPath))
 end
 
 return M
