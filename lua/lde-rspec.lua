@@ -21,8 +21,8 @@ local function read_config()
 	end
 end
 
-local function docker_command(service)
-	return "docker exec -it kitman-lde-" .. service .. ' bash -c "bundle exec rspec '
+local function run_command(service, specPath)
+	return "docker exec -it kitman-lde-" .. service .. ' bash -c "bundle exec rspec ' .. specPath .. '"'
 end
 
 local function create_service_selection_buffer()
@@ -69,22 +69,19 @@ function M.run_nearest_spec()
 	local service = read_config()
 
 	local specPath = vim.fn.expand("%") .. ":" .. vim.api.nvim_win_get_cursor(0)[1]
-	local runCommand = docker_command(service) .. specPath .. '"'
-	require("FTerm").run(runCommand)
+	require("FTerm").run(run_command(service, specPath))
 end
 
 function M.run_this_spec()
 	local service = read_config()
 	local specPath = vim.fn.expand("%")
-	local runCommand = docker_command(service) .. specPath .. '"'
-	require("FTerm").run(runCommand)
+	require("FTerm").run(run_command(service, specPath))
 end
 
 function M.run_spec_folder()
 	local service = read_config()
 	local specPath = vim.fn.expand("%:h")
-	local runCommand = docker_command(service) .. specPath .. '"'
-	require("FTerm").run(runCommand)
+	require("FTerm").run(run_command(service, specPath))
 end
 
 return M
