@@ -12,7 +12,7 @@ local function read_config()
 	local path = vim.fn.stdpath("data") .. "/lde-rspec.json"
 	local file = io.open(path, "r")
 	if file == nil then
-		return M:set_service()
+		return M:select_service()
 	else
 		local config = assert(vim.fn.json_decode(file:read()))
 		return config.service
@@ -42,7 +42,7 @@ function M.select_service()
 	local buf = create_service_selection_buffer()
 	vim.cmd("botright split")
 	vim.api.nvim_set_current_buf(buf)
-	vim.cmd("startinsert")
+	-- vim.cmd("startinsert")
 	vim.cmd('nnoremap <buffer><silent><CR> :lua require("lde-rspec").set_service()<CR>')
 end
 
