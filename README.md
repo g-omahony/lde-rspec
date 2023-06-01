@@ -8,3 +8,8 @@ Use your preferred package manager to install the plugin. For example, with vim-
 
 ```vim
 Plug 'g-omahony/lde-rspec'
+```
+
+
+```vim
+Lazy add `return { 'g-omahony/lde-rspec' }` to lde-rspec.lua in your plugins folder

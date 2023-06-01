@@ -29,14 +29,33 @@ local function read_config()
 	end
 end
 
-local function run_command(service, specPath)
+local function run_command(specPath)
+	local service = read_config()
 	return "docker exec -it kitman-lde-" .. service .. ' bash -c "bundle exec rspec ' .. specPath .. '"'
 end
 
+local function service_list()
+	local services = {}
+	local handle = io.popen('docker ps --filter "name=kitman-lde" --format "{{.Names}}"')
+	local result = nil
+	if handle then
+		result = handle:read("*a")
+		handle:close()
+	end
+	if result then
+		for line in result:gmatch("[^\r\n]+") do
+			table.insert(services, line.sub(line, 12, -1))
+		end
+		return services
+	else
+		return { "medinah" }
+	end
+end
+
 local function create_service_selection_buffer()
+	local services = service_list()
 	local width = 20
-	local height = 3
-	local services = { "medinah", "console", "athlete-api" }
+	local height = #services
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
 	vim.api.nvim_buf_set_option(buf, "filetype", "lde-rspec")
@@ -76,21 +95,18 @@ function M.set_service()
 end
 
 function M.run_nearest_spec()
-	local service = read_config()
 	local specPath = vim.fn.expand("%") .. ":" .. vim.api.nvim_win_get_cursor(0)[1]
-	fterm.run(run_command(service, specPath))
+	fterm.run(run_command(specPath))
 end
 
 function M.run_this_spec()
-	local service = read_config()
 	local specPath = vim.fn.expand("%")
-	fterm.run(run_command(service, specPath))
+	fterm.run(run_command(specPath))
 end
 
 function M.run_spec_folder()
-	local service = read_config()
 	local specPath = vim.fn.expand("%:h")
-	fterm.run(run_command(service, specPath))
+	fterm.run(run_command(specPath))
 end
 
 return M
