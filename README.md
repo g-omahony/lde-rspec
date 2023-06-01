@@ -20,3 +20,19 @@ return { 'g-omahony/lde-rspec' }
 ```
 
 to `lde-rspec.lua` in your plugins folder
+
+## Usage
+```vim
+:lua require('lde-rspec').select_service()
+```
+will allow you to select the service from the popup menu
+
+it can be mapped to a key like so:
+```vim
+vim.keymap.set(
+  "n",
+  "<leader>rs",
+  "<CMD>:lua require('lde-rspec').select_service()<CR>",
+  { noremap = true, silent = true, desc = "Set the test service" }
+)
+```
