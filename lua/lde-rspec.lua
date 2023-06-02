@@ -29,7 +29,7 @@ local function read_config()
 	end
 end
 
-local function run_command(specPath)
+local function command(specPath)
 	local service = read_config()
 	return "docker exec -it kitman-lde-" .. service .. ' bash -c "bundle exec rspec ' .. specPath .. '"'
 end
@@ -96,17 +96,17 @@ end
 
 function M.run_nearest_spec()
 	local specPath = vim.fn.expand("%") .. ":" .. vim.api.nvim_win_get_cursor(0)[1]
-	fterm.run(run_command(specPath))
+	fterm.run(command(specPath))
 end
 
 function M.run_this_spec()
 	local specPath = vim.fn.expand("%")
-	fterm.run(run_command(specPath))
+	fterm.run(command(specPath))
 end
 
 function M.run_spec_folder()
 	local specPath = vim.fn.expand("%:h")
-	fterm.run(run_command(specPath))
+	fterm.run(command(specPath))
 end
 
 return M
