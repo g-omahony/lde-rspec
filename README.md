@@ -39,7 +39,7 @@ vim.keymap.set(
   { noremap = true, silent = true, desc = "Set the test service" }
 )
 ```
-
+You can run `RSpec` tests using the following:
 ```vim
 :lua require('lde-rspec').run_nearest_spec()
 
