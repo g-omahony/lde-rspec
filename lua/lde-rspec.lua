@@ -73,7 +73,7 @@ local function create_service_selection_buffer()
 	return buf
 end
 
-local function select_service(buf)
+local function service_selected(buf)
 	local selected = vim.fn.getline(".")
 	vim.api.nvim_buf_delete(buf, { force = true })
 
@@ -87,7 +87,7 @@ function M.select_service()
 end
 
 function M.set_service()
-	local service = select_service(vim.api.nvim_get_current_buf())
+	local service = service_selected(vim.api.nvim_get_current_buf())
 	local config = { service = service }
 	write_config(config)
 
