@@ -1,5 +1,6 @@
 local popup = require("plenary.popup")
 local fterm = require("FTerm")
+local DEFAULT_WIDTH = 20
 
 local M = {}
 
@@ -8,10 +9,10 @@ local function config_path()
 end
 
 local function write_config(config)
-	local json = vim.fn.json_encode(config)
 	local path = config_path()
 	local file = io.open(path, "w")
 	if file ~= nil then
+		local json = vim.fn.json_encode(config)
 		file:write(json)
 		file:close()
 	end
@@ -54,7 +55,7 @@ end
 
 local function create_service_selection_buffer()
 	local services = service_list()
-	local width = 20
+	local width = DEFAULT_WIDTH
 	local height = #services
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
